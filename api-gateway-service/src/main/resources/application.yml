@@ -1,0 +1,28 @@
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+spring:
+  application:
+    name: api-gateway-service
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: user-service
+            uri: http://localhost:8081/
+            # predicates는 프록시 패스 경로 지정
+            # Predicates의 Path는 uri + predicates 경로 형식으로 호출된다.
+            predicates:
+              - Path=/first-service/**
+          - id: second-service
+            uri: http://localhost:8082/
+            predicates:
+              - Path=/second-service/**
