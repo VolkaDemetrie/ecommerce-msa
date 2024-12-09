@@ -1,5 +1,6 @@
 package com.volka.ecommerce.apigatewayservice.filter;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -10,32 +11,29 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Config> {
+public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Config> {
 
-    public CustomFilter() {
-        super(Config.class);
-    }
+    public GlobalFilter() { super(Config.class); }
 
-    /**
-     * JWT
-     * @param config
-     * @return
-     */
     @Override
     public GatewayFilter apply(Config config) {
-        return (exchange, chain) -> {
+        return ((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
 
-            log.info("Custom PRE filter :: request uri -> {}", request.getId());
+            log.info("Global Filter baseMessage :: {}", config.getBaseMessage());
+            if (config.isPreLogger()) log.info("Global Filter Start: request id -> {}", request.getId());
 
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                log.info("Custom POST filter :: response code -> {}", response.getStatusCode());
+                if (config.isPostLogger()) log.info("Global Filter End: response code -> {}", response.getStatusCode());
             }));
-        };
+        });
     }
 
+    @Data
     public static class Config {
-
+        private String baseMessage;
+        private boolean preLogger;
+        private boolean postLogger;
     }
 }

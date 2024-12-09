@@ -17,4 +17,9 @@ public class SecondController {
         System.out.println(header);
         return "Hello World in Second Service";
     }
+
+    @GetMapping("/check")
+    public String check() {
+        return "Hi, there. Second service";
+    }
 }

@@ -3,8 +3,8 @@ server:
 
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
 
@@ -14,9 +14,15 @@ spring:
     name: api-gateway-service
   cloud:
     gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway GlobalFilter
+            preLogger: true
+            postLogger: true
       routes:
-        - id: user-service
-          uri: http://localhost:8081/
+        - id: first-service
+          uri: lb://FIRST-SERVICE #lb는 eureka 연동 시 서비스명으로 패스
           # predicates는 프록시 패스 경로 지정
           # Predicates의 Path는 uri + predicates 경로 형식으로 호출된다.
           predicates:
@@ -26,10 +32,15 @@ spring:
 #            - AddResponseHeader=first-response, first-response-header2
             - CustomFilter
         - id: second-service
-          uri: http://localhost:8082/
+          uri: lb://SECOND-SERVICE #lb는 eureka 연동 시 서비스명으로 패스
           predicates:
             - Path=/second-service/**
           filters:
-            - CustomFilter
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true
 #            - AddRequestHeader=first-request, first-request-header2
 #            - AddResponseHeader=first-response, first-response-header2
