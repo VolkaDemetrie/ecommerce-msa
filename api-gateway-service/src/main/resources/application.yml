@@ -21,6 +21,12 @@ spring:
             preLogger: true
             postLogger: true
       routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - name: CustomFilter
         - id: first-service
           uri: lb://FIRST-SERVICE #lb는 eureka 연동 시 서비스명으로 패스
           # predicates는 프록시 패스 경로 지정
