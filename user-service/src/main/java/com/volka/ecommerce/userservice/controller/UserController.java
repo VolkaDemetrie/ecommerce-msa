@@ -1,6 +1,7 @@
 package com.volka.ecommerce.userservice.controller;
 
 import com.volka.ecommerce.userservice.dto.RequestUser;
+import com.volka.ecommerce.userservice.dto.ResponseUser;
 import com.volka.ecommerce.userservice.dto.UserDto;
 import com.volka.ecommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +26,15 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity createUser(@RequestBody RequestUser user) {
+    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
 
         UserDto userDto = new UserDto();
         userDto.setName(user.getName());
         userDto.setEmail(user.getEmail());
 
-        userService.createUser(userDto);
+        UserDto dto = userService.createUser(userDto);
 
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<>(ResponseUser.of(dto), HttpStatus.CREATED);
     }
 
 }
