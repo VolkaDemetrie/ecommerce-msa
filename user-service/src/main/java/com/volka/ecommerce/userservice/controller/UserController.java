@@ -1,27 +1,39 @@
 package com.volka.ecommerce.userservice.controller;
 
+import com.volka.ecommerce.userservice.dto.RequestUser;
+import com.volka.ecommerce.userservice.dto.UserDto;
+import com.volka.ecommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/user-service")
+@RequestMapping("/users")
 @RestController
 public class UserController {
 
-    private final Environment env;
+    private final UserService userService;
 
-    @GetMapping("/health-check")
-    public String status() {
-        return "It's Working in User Service";
+    @GetMapping
+    public List<UserDto> getAll() {
+        return userService.getAll();
     }
 
-    @GetMapping("/welcome")
-    public String welcome() {
-        return env.getProperty("greeting.message");
+    @PostMapping
+    public ResponseEntity createUser(@RequestBody RequestUser user) {
+
+        UserDto userDto = new UserDto();
+        userDto.setName(user.getName());
+        userDto.setEmail(user.getEmail());
+
+        userService.createUser(userDto);
+
+        return new ResponseEntity(HttpStatus.CREATED);
     }
+
 }
