@@ -4,4 +4,6 @@ include 'discovery-service'
 include 'user-service'
 include 'first-service'
 include 'second-service'
+include 'catalog-service'
+include 'catalog-service'
 
