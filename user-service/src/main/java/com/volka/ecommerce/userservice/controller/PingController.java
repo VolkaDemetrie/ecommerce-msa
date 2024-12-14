@@ -1,5 +1,6 @@
 package com.volka.ecommerce.userservice.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -16,8 +17,8 @@ public class PingController {
     private final Environment env;
 
     @GetMapping("/health-check")
-    public String status() {
-        return "It's Working in User Service";
+    public String status(HttpServletRequest request) {
+        return String.format("It's Working in User Service on Port %s", request.getServerPort());
     }
 
     @GetMapping("/welcome")

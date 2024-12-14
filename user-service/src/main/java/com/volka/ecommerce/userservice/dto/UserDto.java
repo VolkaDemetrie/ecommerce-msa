@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Data
@@ -24,6 +26,7 @@ public class UserDto {
 
     private LocalDateTime createdAt;
 
+    private List<ResponseOrder> orders;
 
     public User toEntity() {
         return User.create(this);
@@ -35,6 +38,7 @@ public class UserDto {
         this.encryptedPwd = user.getEncryptedPwd();
         this.userId = user.getUserId();
         this.createdAt = user.getCreatedAt();
+        this.orders = new ArrayList<>();
     }
 
     public static UserDto of(User user) {

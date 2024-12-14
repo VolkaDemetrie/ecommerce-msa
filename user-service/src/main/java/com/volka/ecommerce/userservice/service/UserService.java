@@ -5,10 +5,14 @@ import com.volka.ecommerce.userservice.entity.User;
 import com.volka.ecommerce.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,10 +20,26 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(String.format("%s: not found", username)));
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getEncryptedPwd(),
+                true,
+                true,
+                true,
+                true,
+                new ArrayList<>()
+        );
+    }
 
     @Transactional
     public UserDto createUser(UserDto userDto) {
@@ -32,4 +52,10 @@ public class UserService {
     public List<UserDto> getAll() {
         return userRepository.findAll().stream().map(UserDto::of).toList();
     }
+
+    public UserDto getUserByUserId(String userId) {
+        return UserDto.of(userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("not found user")));
+    }
+
+
 }
