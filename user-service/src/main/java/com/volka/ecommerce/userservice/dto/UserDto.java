@@ -18,6 +18,8 @@ public class UserDto {
     @NotNull
     private String userId;
     @NotNull
+    private String pwd;
+
     private String encryptedPwd;
 
     private LocalDateTime createdAt;

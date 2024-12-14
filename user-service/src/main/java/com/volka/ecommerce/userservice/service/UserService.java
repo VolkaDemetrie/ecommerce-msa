@@ -5,6 +5,7 @@ import com.volka.ecommerce.userservice.entity.User;
 import com.volka.ecommerce.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,12 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     public UserDto createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
+        userDto.setEncryptedPwd(passwordEncoder.encode(userDto.getPwd()));
         User user = userRepository.save(userDto.toEntity());
         return UserDto.of(user);
     }
