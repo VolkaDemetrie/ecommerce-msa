@@ -6,4 +6,5 @@ include 'first-service'
 include 'second-service'
 include 'catalog-service'
 include 'catalog-service'
+include 'order-service'
 

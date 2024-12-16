@@ -1,12 +1,10 @@
-package com.volka.ecommerce.catalogservice.controller;
+package com.volka.ecommerce.orderservice.controller;
 
-import com.volka.ecommerce.catalogservice.dto.CatalogDto;
-import com.volka.ecommerce.catalogservice.dto.ResponseCatalog;
-import com.volka.ecommerce.catalogservice.service.CatalogService;
+import com.volka.ecommerce.orderservice.dto.ResponseCatalog;
+import com.volka.ecommerce.orderservice.service.CatalogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

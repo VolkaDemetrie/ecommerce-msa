@@ -33,6 +33,12 @@ spring:
             - Path=/catalog-service/**
           filters:
             - name: CustomFilter
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
+          filters:
+            - name: CustomFilter
         - id: first-service
           uri: lb://FIRST-SERVICE #lb는 eureka 연동 시 서비스명으로 패스
           # predicates는 프록시 패스 경로 지정

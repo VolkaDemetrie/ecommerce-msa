@@ -1,7 +1,7 @@
-package com.volka.ecommerce.catalogservice.service;
+package com.volka.ecommerce.orderservice.service;
 
-import com.volka.ecommerce.catalogservice.dto.CatalogDto;
-import com.volka.ecommerce.catalogservice.repository.CatalogRepository;
+import com.volka.ecommerce.orderservice.dto.CatalogDto;
+import com.volka.ecommerce.orderservice.repository.CatalogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

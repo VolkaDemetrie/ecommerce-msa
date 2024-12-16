@@ -31,5 +31,9 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance-id:${random.value}}
 
+logging:
+  level:
+    com.volka.ecommerce.userservice: DEBUG
+
 greeting:
   message: "Welcome to the Simple E-commerce"
