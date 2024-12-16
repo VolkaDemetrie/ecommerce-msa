@@ -1,4 +1,4 @@
-package com.volka.ecommerce.orderservice.dto;
+package com.volka.ecommerce.catalogservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

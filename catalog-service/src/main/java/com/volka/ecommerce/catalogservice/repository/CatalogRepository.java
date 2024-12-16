@@ -1,6 +1,6 @@
-package com.volka.ecommerce.orderservice.repository;
+package com.volka.ecommerce.catalogservice.repository;
 
-import com.volka.ecommerce.orderservice.entity.Catalog;
+import com.volka.ecommerce.catalogservice.entity.Catalog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

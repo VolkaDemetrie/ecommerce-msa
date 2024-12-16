@@ -1,7 +1,7 @@
-package com.volka.ecommerce.orderservice.controller;
+package com.volka.ecommerce.catalogservice.controller;
 
-import com.volka.ecommerce.orderservice.dto.ResponseCatalog;
-import com.volka.ecommerce.orderservice.service.CatalogService;
+import com.volka.ecommerce.catalogservice.service.CatalogService;
+import com.volka.ecommerce.catalogservice.dto.ResponseCatalog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;

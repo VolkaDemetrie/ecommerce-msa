@@ -1,4 +1,4 @@
-package com.volka.ecommerce.orderservice.controller;
+package com.volka.ecommerce.catalogservice.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;

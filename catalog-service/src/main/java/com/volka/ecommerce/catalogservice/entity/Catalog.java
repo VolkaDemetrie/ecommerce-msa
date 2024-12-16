@@ -1,4 +1,4 @@
-package com.volka.ecommerce.orderservice.entity;
+package com.volka.ecommerce.catalogservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

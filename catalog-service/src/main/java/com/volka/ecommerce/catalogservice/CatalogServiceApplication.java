@@ -1,4 +1,4 @@
-package com.volka.ecommerce.orderservice;
+package com.volka.ecommerce.catalogservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
