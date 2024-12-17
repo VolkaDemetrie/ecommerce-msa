@@ -41,7 +41,18 @@ public class UserDto {
         this.orders = new ArrayList<>();
     }
 
+    private UserDto(RequestUser requestUser) {
+        this.email = requestUser.getEmail();
+        this.name = requestUser.getName();
+        this.pwd = requestUser.getPwd();
+    }
+
     public static UserDto of(User user) {
         return new UserDto(user);
     }
+    public static UserDto of(RequestUser user) {
+        return new UserDto(user);
+    }
+
+
 }

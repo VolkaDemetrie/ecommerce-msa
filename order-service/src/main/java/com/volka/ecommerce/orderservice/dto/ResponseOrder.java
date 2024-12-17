@@ -1,5 +1,6 @@
 package com.volka.ecommerce.orderservice.dto;
 
+import com.volka.ecommerce.orderservice.entity.Order;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,8 +24,20 @@ public class ResponseOrder {
         totalPrice = orderDto.getTotalPrice();
         orderId = orderDto.getOrderId();
     }
+    
+    private ResponseOrder(Order order) {
+        productId = order.getProductId();
+        qty = order.getQty();
+        unitPrice = order.getUnitPrice();
+        totalPrice = order.getTotalPrice();
+        orderId = order.getOrderId();
+        createdAt = order.getCreatedAt();
+    }
 
     public static ResponseOrder of(OrderDto orderDto) {
         return new ResponseOrder(orderDto);
+    }
+    public static ResponseOrder of(Order order) {
+        return new ResponseOrder(order);
     }
 }

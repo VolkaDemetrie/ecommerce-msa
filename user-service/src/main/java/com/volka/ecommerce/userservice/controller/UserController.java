@@ -33,12 +33,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
-
-        UserDto userDto = new UserDto();
-        userDto.setName(user.getName());
-        userDto.setEmail(user.getEmail());
-
-        UserDto dto = userService.createUser(userDto);
+        UserDto dto = userService.createUser(UserDto.of(user));
 
         return new ResponseEntity<>(ResponseUser.of(dto), HttpStatus.CREATED);
     }
