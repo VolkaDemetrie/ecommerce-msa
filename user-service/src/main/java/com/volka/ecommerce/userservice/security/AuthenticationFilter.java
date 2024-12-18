@@ -5,6 +5,7 @@ import com.volka.ecommerce.userservice.dto.RequestLogin;
 import com.volka.ecommerce.userservice.dto.UserDto;
 import com.volka.ecommerce.userservice.service.UserService;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -86,6 +87,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .expiration(Date.from(now.plusMillis(Long.parseLong(environment.getProperty("token.expiration-time")))))
                 .issuedAt(Date.from(now))
                 .signWith(secretKey)
+//                .signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
                 .compact();
 
         response.addHeader("token", token);
