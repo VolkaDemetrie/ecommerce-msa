@@ -37,7 +37,7 @@ public class UserService implements UserDetailsService {
                 true,
                 true,
                 true,
-                new ArrayList<>()
+                new ArrayList<>() //권한
         );
     }
 
@@ -58,4 +58,8 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public UserDto getUserDetailsByEmail(String email) {
+        User userEntity = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+        return UserDto.of(userEntity);
+    }
 }

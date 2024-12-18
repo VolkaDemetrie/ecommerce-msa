@@ -1,5 +1,6 @@
 package com.volka.ecommerce.userservice.controller;
 
+import com.volka.ecommerce.userservice.dto.RequestLogin;
 import com.volka.ecommerce.userservice.dto.RequestUser;
 import com.volka.ecommerce.userservice.dto.ResponseUser;
 import com.volka.ecommerce.userservice.dto.UserDto;
@@ -37,5 +38,10 @@ public class UserController {
 
         return new ResponseEntity<>(ResponseUser.of(dto), HttpStatus.CREATED);
     }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody RequestLogin loginDto) {
+//        return null;
+//    }
 
 }

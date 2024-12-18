@@ -18,6 +18,6 @@ public class RequestUser {
     private String name;
 
     @NotNull
-    @Size(min = 8, message = "Password must be equal or greater than 8 characters")
+    @Size(min = 4, message = "Password must be equal or greater than 8 characters")
     private String pwd;
 }
