@@ -22,13 +22,13 @@ public class User {
     @Column(nullable = false, length = 50, unique = true)
     private String userId;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String email;
 
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String encryptedPwd;
 
     @CreatedDate
@@ -50,7 +50,7 @@ public class User {
                 .userId(userDto.getUserId())
                 .email(userDto.getEmail())
                 .name(userDto.getName())
-                .encryptedPwd("encrypted_password")
+                .encryptedPwd(userDto.getEncryptedPwd())
                 .createdAt(LocalDateTime.now())
                 .build();
     }

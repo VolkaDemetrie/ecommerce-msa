@@ -69,7 +69,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(
             HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult
-    ) throws IOException, ServletException {
+    ) {
+        log.info("authResult :: {}", authResult);
         User userDetails = (User) authResult.getPrincipal();
         String userName = userDetails.getUsername();
         UserDto userDto = userService.getUserDetailsByEmail(userName);

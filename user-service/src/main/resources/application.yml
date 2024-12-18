@@ -1,6 +1,6 @@
 server:
   port: 0
-  servlet:
+#  servlet:
 #    context-path: /${spring.application.name} #G/W에서 라우팅 시 패스에 서비스명 제거하여 라우팅
 
 spring:
@@ -30,6 +30,10 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka #유레카 서버 url + /eureka 라는 엔드포인트에 현재 서비스 등록
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance-id:${random.value}}
+
+token:
+  expiration-time: 86400000
+  secret: user_token_test_user_token_test_user_token_test
 
 logging:
   level:
