@@ -1,0 +1,13 @@
+server:
+  port: 8888 # spring cloud config default port
+
+
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+#          uri: https://github.com/VolkaDemetrie/ecommerce-config.git
+          uri: file://Users/volka/git/ecommerce-config
