@@ -36,6 +36,12 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
     }
 
+    /**
+     * ServerWebExchange 의 request / response 는 immutable. 헤더 등을 수정하고 싶을땐 ServerHttpRequest.mutable()로 빌드하여 사용
+     * response는 응답 커밋 전에 처리를 해줘야함. ServerHttpResponse.berforeCommit() 활용
+     * @param config
+     * @return
+     */
     // login -> token -> users (with token) -> header(include token)
     @Override
     public GatewayFilter apply(Config config) {
@@ -46,7 +52,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
 
+//            ServerHttpRequest mutateRequest = request.mutate().header("test-header", "test").build();
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).getFirst();
+//            String authorizationHeader = mutateRequest.getHeaders().get(HttpHeaders.AUTHORIZATION).getFirst();
             String jwt = authorizationHeader.replace("Bearer ", "");
 
             if (!isJwtValid(jwt)) {
@@ -69,11 +77,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         String subject = null;
 
         try {
-//            JwtParser jwtParser = Jwts.parser()
-//                    .decryptWith(signingKey)
-//                    .build();
             JwtParser jwtParser = Jwts.parser()
-                    .setSigningKey(signingKey)
+                    .verifyWith(signingKey) // io.jsonwebtoken 에서 setSigningKey(SecretKey) deprecated 대체
                     .build();
             subject = jwtParser.parseSignedClaims(jwt).getPayload().getSubject();
         } catch (Exception e) {
@@ -89,14 +94,14 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         log.error(error);
 
         ServerHttpResponse response = exchange.getResponse();
-//        response.setStatusCode(httpStatus);
-//        return response.setComplete();
-        response.beforeCommit(() -> {
-            response.setStatusCode(httpStatus);
-            return response.setComplete();
-        });
+        response.setStatusCode(httpStatus);
+        return response.setComplete();
+//        response.beforeCommit(() -> {
+//            response.setStatusCode(httpStatus);
+//            return response.setComplete();
+//        });
 
-        return Mono.empty();
+//        return Mono.empty();
 
 //        byte[] bytes = "The requested token is invalid.".getBytes(StandardCharsets.UTF_8);
 //        DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);

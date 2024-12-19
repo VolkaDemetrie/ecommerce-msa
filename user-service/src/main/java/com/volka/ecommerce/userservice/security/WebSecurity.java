@@ -49,7 +49,7 @@ public class WebSecurity {
                 .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
-//                .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/welcome")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/health-check")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()

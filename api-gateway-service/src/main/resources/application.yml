@@ -31,7 +31,8 @@ spring:
             - Path=/user-service/login
             - Method=POST
           filters:
-#            - RemoveRequestHeader=Cookie #Spring 6 부터 ServerHttpRequest/Response 의 헤더 불변으로 예외 발생. commit 전에 set() 수정 가능함.
+#            - RemoveRequestHeader=Cookie #SpringBoot 3.3.x 부터 버전에 맞는 Spring Security에선 ServerHttpRequest/Response 의 헤더 불변으로 예외 발생. commit 전에 set() 수정 가능함.
+            # Spring Security는 요청을 처리하는 과정에서 인증/인가를 위해 SeverHttpRequest 객체를 수정한다. 이 과정에서 요청 객체가 래핑되어 원본과 다른 인스턴스로 변환될 수 있다. -> RemoveRequestHeader 필터는 헤더를 제거하기 위해 SeverHttpRequest.mutate()를 호출하지만 Spring Security가 래핑한 객체는 이런 호출을 제대로 지원하지 않을 수 있다.
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         - id: user-service
           uri: lb://USER-SERVICE
@@ -47,7 +48,7 @@ spring:
             - Path=/user-service/**
             - Method=GET
           filters:
-            - RemoveRequestHeader=Cookie
+#            - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
         - id: catalog-service
