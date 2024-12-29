@@ -45,6 +45,14 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET,POST
+          filters:
+#            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/user-service/**
             - Method=GET
           filters:
@@ -86,6 +94,13 @@ spring:
                 postLogger: true
 #            - AddRequestHeader=first-request, first-request-header2
 #            - AddResponseHeader=first-response, first-response-header2
-token:
-  expiration-time: 86400000
-  secret: user_token_test_user_token_test_user_token_test
+#token:
+#  expiration-time: 86400000
+#  secret: user_token_test_user_token_test_user_token_test
+
+management:
+  endpoints:
+    web:
+      exposure:
+#        include: refresh, health, beans, httpexchanges, busrefresh, info, metrics, prometheus
+        include: refresh, health, beans, httptrace

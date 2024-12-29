@@ -18,7 +18,13 @@ public class PingController {
 
     @GetMapping("/health-check")
     public String status(HttpServletRequest request) {
-        return String.format("It's Working in User Service on Port %s", request.getServerPort());
+        return String.format(
+                "It's Working in User Service \nport(local.server.port)=%s\nport(server.port)=%s\ntoken secret=%s\ntoken time=%s"
+                ,env.getProperty("local.server.port")
+                ,env.getProperty("server.port")
+                ,env.getProperty("token.secret")
+                ,env.getProperty("token.expiration-time")
+        );
     }
 
     @GetMapping("/welcome")

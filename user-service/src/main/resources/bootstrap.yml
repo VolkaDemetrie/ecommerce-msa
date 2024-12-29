@@ -1,0 +1,5 @@
+spring:
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+      name: ecommerce # config git repo에 yml 파일명

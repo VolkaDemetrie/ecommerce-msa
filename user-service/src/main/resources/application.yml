@@ -31,9 +31,15 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance-id:${random.value}}
 
-token:
-  expiration-time: 86400000
-  secret: user_token_test_user_token_test_user_token_test
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,beans
+
+#token:
+#  expiration-time: 86400000
+#  secret: user_token_test_user_token_test_user_token_test
 
 logging:
   level:
