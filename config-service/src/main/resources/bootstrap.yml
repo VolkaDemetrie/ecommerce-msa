@@ -1,2 +1,2 @@
 encrypt:
-  key: qwertyuiopasdfghjklzxcvbnm1234567890
+  key: qwertyuiopasdfghjklzxcvbnm1234567890 # 대칭키 선언
