@@ -44,6 +44,9 @@ dependencies {
     // spring cloud bus
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 
+    //Feign Client
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.jsonwebtoken:jjwt:0.12.6'

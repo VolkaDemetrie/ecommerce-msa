@@ -1,9 +1,11 @@
 package com.volka.ecommerce.userservice.service;
 
+import com.volka.ecommerce.userservice.client.OrderServiceClient;
 import com.volka.ecommerce.userservice.dto.ResponseOrder;
 import com.volka.ecommerce.userservice.dto.UserDto;
 import com.volka.ecommerce.userservice.entity.User;
 import com.volka.ecommerce.userservice.repository.UserRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,7 +31,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final RestTemplate restTemplate;
+    private final OrderServiceClient orderServiceClient;
     private final Environment env;
 
     @Override
@@ -58,18 +60,30 @@ public class UserService implements UserDetailsService {
     public List<UserDto> getAll() {
         return userRepository.findAll().stream()
                 .map(UserDto::of)
-                .peek(userDto -> userDto.setOrders(
-                        restTemplate.exchange(
-                                String.format(env.getProperty("order-service.url"), userDto.getUserId())
-                                , HttpMethod.GET
-                                , null
-                                , new ParameterizedTypeReference<List<ResponseOrder>>(){}
-                        ).getBody()
-                )).toList();
+                .peek(userDto -> {
+                    List<ResponseOrder> orders = orderServiceClient.getOrders(userDto.getUserId());
+                    userDto.setOrders(orders);
+                }).toList();
+//        return userRepository.findAll().stream()
+//                .map(UserDto::of)
+//                .peek(userDto -> userDto.setOrders(
+//                        restTemplate.exchange(
+//                                String.format(env.getProperty("order-service.url"), userDto.getUserId())
+//                                , HttpMethod.GET
+//                                , null
+//                                , new ParameterizedTypeReference<List<ResponseOrder>>(){}
+//                        ).getBody()
+//                )).toList();
     }
 
     public UserDto getUserByUserId(String userId) {
-        return UserDto.of(userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("not found user")));
+        UserDto userDto = userRepository.findByUserId(userId)
+                .map(UserDto::of)
+                .orElseThrow(() -> new IllegalArgumentException("not"));
+
+        userDto.setOrders(orderServiceClient.getOrders(userDto.getUserId()));
+
+        return userDto;
     }
 
 
