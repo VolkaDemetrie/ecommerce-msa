@@ -64,16 +64,6 @@ public class UserService implements UserDetailsService {
                     List<ResponseOrder> orders = orderServiceClient.getOrders(userDto.getUserId());
                     userDto.setOrders(orders);
                 }).toList();
-//        return userRepository.findAll().stream()
-//                .map(UserDto::of)
-//                .peek(userDto -> userDto.setOrders(
-//                        restTemplate.exchange(
-//                                String.format(env.getProperty("order-service.url"), userDto.getUserId())
-//                                , HttpMethod.GET
-//                                , null
-//                                , new ParameterizedTypeReference<List<ResponseOrder>>(){}
-//                        ).getBody()
-//                )).toList();
     }
 
     public UserDto getUserByUserId(String userId) {
