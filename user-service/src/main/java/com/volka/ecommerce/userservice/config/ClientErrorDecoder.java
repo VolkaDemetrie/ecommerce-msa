@@ -21,7 +21,10 @@ public class ClientErrorDecoder implements ErrorDecoder {
                 break;
             case 404:
                 // FIXME :: 테스트용.
-                if (methodKey.contains("getOrders")) return new ResponseStatusException(HttpStatus.valueOf(response.status()), "User's orders is empty");
+                if (methodKey.contains("getOrders")) {
+                    return new ResponseStatusException(HttpStatus.valueOf(response.status())
+                            , "User's orders is empty");
+                }
                 break;
             default:
                 return new Exception(response.reason());

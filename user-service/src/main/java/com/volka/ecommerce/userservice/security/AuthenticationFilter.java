@@ -43,7 +43,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private ObjectMapper objectMapper;
 //    private SecretKey secretKey;
 
-    private static final String algorithm = "HmacSHA256";
+//    private static final String algorithm = "HmacSHA256";
 
     public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService, Environment environment) throws NoSuchAlgorithmException {
         super(authenticationManager);

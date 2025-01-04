@@ -79,9 +79,9 @@ public class UserService implements UserDetailsService {
     public UserDto getUserByUserId(String userId) {
         UserDto userDto = userRepository.findByUserId(userId)
                 .map(UserDto::of)
-                .orElseThrow(() -> new IllegalArgumentException("not"));
-
-        userDto.setOrders(orderServiceClient.getOrders(userDto.getUserId()));
+                .orElseThrow(() -> new IllegalArgumentException("not found user"));
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userDto.getUserId());
+        userDto.setOrders(orders);
 
         return userDto;
     }
