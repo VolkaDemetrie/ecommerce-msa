@@ -13,6 +13,8 @@ services:
       MYSQL_PASSWORD: 'test1234'
       MYSQL_ROOT_PASSWORD: 'rootpass'
       TZ: Asia/Seoul
+    networks:
+      - msa-network
   rabbitmq:
     image: rabbitmq:4-management-alpine
     ports:
@@ -24,37 +26,48 @@ services:
     ports:
       - "2181:2181"
     networks:
-      - kafka-cluster
+      - msa-network
+#      msa-network:
+#        ipv4_address: 172.18.0.100
     environment:
 #      ZOOKEEPER_SERVER_ID: 1 # 주키퍼 클러스터에서 유일하게 주키퍼를 식별할 아이디
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000 # 주키퍼 클러스터 구성 시 동기화를 위한 기본 틱 타임 지정 (ms 단위)
 #      ZOOKEEPER_SYNC_LIMIT: 2 # 주키퍼 리더와 나머지 서버들의 싱크 타임. 틱타임 * 싱크타임. 멀티 브로커에서 유효한 속성이다.
-  kafka:
+  kafka-broker:
 #    image: apache/kafka:3.7.2
     image: confluentinc/cp-kafka:latest
-    container_name: kafka
+    container_name: kafka-broker
     ports:
       - "9092:9092" # plain text
+      - "9101:9101" # JMX
 #      - "9093:9093" # controller broker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - kafka-cluster
     depends_on:
       - zookeeper # zookeeper 모드 사용 시 주키퍼 이후에 런 돼야한다.
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # zookeeper 연결 명령어
-      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_ADVERTISED_HOST_NAME: localhost # 멀티 브로커 사용 시 루프백 IP 쓰지 말아야함.
+#      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092 # 필수. KRaft 모드 시 컨트롤러도 설정
+      KAFKA_CREATE_TOPICS: "test:1:1" # <topic_name>:<partitions>:<replication_factor>
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # 기본 복제 개수
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # zookeeper 연결 명령어
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - msa-network
+#      msa-network:
+#        ipv4_address: 172.18.0.10
 
 ########## KRaft 모드 시 필요 옵션 ##########
 #      KAFKA_NODE_ID: 1 # KRaft 모드 사용 시 노드 아이디
 #      KAFKA_PROCESS_ROLES: broker,controller # KRaft 모드 시 역할 지정
 #      KAFKA_LISTENERS: PLAINTEXT://localhost:9092,CONTROLLER://localhost:9093
-#      KAFKA_CREATE_TOPICS: quickstart-events:1:1 # <topic_name>:<partitions>:<replication_factor>
 #      KAFKA_LISTENERS: PLAINTEXT://localhost:9092
 #      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
 #      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
@@ -66,7 +79,37 @@ services:
 #      KAFKA_LOG_DIRS: /tmp/kraft-logs
 #      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
 
+  kafka-connect-jdbc:
+    image: confluentinc/cp-kafka-connect:latest
+    ports:
+      - "8083:8083"
+    links:
+      - kafka-broker
+      - zookeeper
+    environment:
+      CONNCET_BOOTSTRAP_SERVERS: kafka-broker:9092
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: "test-group"
+      CONNECT_CONFIG_STORAGE_TOPIC: "test-group-config"
+      CONNECT_OFFSET_STORAGE_TOPIC: "test-group-offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "test-group-status"
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "localhost"
+      CONNECT_LOG4J_ROOT_LOGLEVEL: DEBUG
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/etc/kafka-connect/jars"
+    volumes:
+      - "$PWD/kafka-connector-plugin/lib:/etc/kafka-connect/jars"
+    networks:
+      - msa-network
 
 networks:
-  kafka-cluster:
-    driver: bridge
+  msa-network:
+    name: ecommerce-network
+    external: true
+#    driver: bridge
