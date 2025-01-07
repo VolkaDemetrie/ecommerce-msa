@@ -48,7 +48,8 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ADVERTISED_HOST_NAME: localhost # 멀티 브로커 사용 시 루프백 IP 쓰지 말아야함.
 #      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092 # 필수. KRaft 모드 시 컨트롤러도 설정
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:9092 # 필수. KRaft 모드 시 컨트롤러도 설정
+      KAFKA_LISTENER: PLAINTEXT://localhost:9092
       KAFKA_CREATE_TOPICS: "test:1:1" # <topic_name>:<partitions>:<replication_factor>
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # 기본 복제 개수
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # zookeeper 연결 명령어
@@ -83,16 +84,18 @@ services:
     image: confluentinc/cp-kafka-connect:latest
     ports:
       - "8083:8083"
-    links:
+#    links:
+#      - kafka-broker
+#      - zookeeper
+    depends_on:
       - kafka-broker
-      - zookeeper
     environment:
-      CONNCET_BOOTSTRAP_SERVERS: kafka-broker:9092
+      CONNECT_BOOTSTRAP_SERVERS: kafka-broker:9092
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: "test-group"
-      CONNECT_CONFIG_STORAGE_TOPIC: "test-group-config"
-      CONNECT_OFFSET_STORAGE_TOPIC: "test-group-offsets"
-      CONNECT_STATUS_STORAGE_TOPIC: "test-group-status"
+      CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
@@ -100,13 +103,22 @@ services:
       CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_REST_ADVERTISED_HOST_NAME: "localhost"
-      CONNECT_LOG4J_ROOT_LOGLEVEL: DEBUG
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
+      CONNECT_LOG4J_ROOT_LOGLEVEL: INFO # root 로그 레벨 설정. DEBUG 시 컨슈머 로그가 다 찍힌다
+      CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR" # 로그 에러 표시
       CONNECT_PLUGIN_PATH: "/usr/share/java,/etc/kafka-connect/jars"
     volumes:
       - "$PWD/kafka-connector-plugin/lib:/etc/kafka-connect/jars"
+      - "$PWD/kafka-connector-plugin/jdbc_driver/mysql-connector-j-8.3.0.jar:/usr/share/java/kafka/mysql-connector-j-8.3.0.jar"
     networks:
       - msa-network
+#    command:
+#      - bash
+#      - -c
+#      - |
+#        confluent-hub install --no-prompt debezium/debezium-connector-mysql:latest
+#        confluent-hub install --no-prompt confluentinc/kafka-connect-datagen:0.4.0
+#        /etc/confluent/docker/run
 
 networks:
   msa-network:
