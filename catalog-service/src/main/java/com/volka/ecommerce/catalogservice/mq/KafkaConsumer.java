@@ -3,20 +3,22 @@ package com.volka.ecommerce.catalogservice.mq;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.volka.ecommerce.catalogservice.entity.Catalog;
 import com.volka.ecommerce.catalogservice.repository.CatalogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
+/**
+ * 카프카 컨슈머
+ */
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@Service
 public class KafkaConsumer {
 
     private final CatalogRepository catalogRepository;
