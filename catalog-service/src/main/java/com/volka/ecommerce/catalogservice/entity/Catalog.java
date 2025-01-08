@@ -1,6 +1,8 @@
 package com.volka.ecommerce.catalogservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -27,4 +29,28 @@ public class Catalog {
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
+    protected Catalog() {}
+
+    @Builder
+    private Catalog(String productId, String productName, Integer stock, Integer unitPrice, LocalDateTime createdAt) {
+        this.productId = productId;
+        this.productName = productName;
+        this.stock = stock;
+        this.unitPrice = unitPrice;
+        this.createdAt = createdAt;
+    }
+
+    public static Catalog create(String productId, String productName, Integer stock, Integer unitPrice) {
+        return Catalog.builder()
+                .productId(productId)
+                .productName(productName)
+                .stock(stock)
+                .unitPrice(unitPrice)
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public void reduce(@Positive Integer qty) {
+        this.stock -= qty;
+    }
 }
