@@ -31,7 +31,9 @@ public class OrderService {
     }
 
     public OrderDto getOrderByOrderId(String orderId) {
-        return OrderDto.of(orderRepository.findByOrderId(orderId).orElseThrow(() -> new IllegalArgumentException("not found")));
+        return orderRepository.findByOrderId(orderId)
+                .map(OrderDto::of)
+                .orElseThrow(() -> new IllegalArgumentException("not found"));
     }
 
     public List<Order> getOrdersByUserId(String userId) {

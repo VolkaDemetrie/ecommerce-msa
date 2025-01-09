@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class KafkaConsumer {
     private final CatalogRepository catalogRepository;
 
     @KafkaListener(topics = "example-catalog-topic")
+    @Transactional
     public void updateQty(String kafkaMessage) {
         log.info("Kafka Message: -> " + kafkaMessage);
         Map<Object, Object> map = new HashMap<>();
@@ -36,6 +38,7 @@ public class KafkaConsumer {
         }
 
         Integer qty = (Integer) map.get("qty");
+        log.info("qty :: {}", qty);
 
         catalogRepository.findByProductId((String) map.get("productId"))
                 .ifPresent(catalog -> catalog.reduce(qty));

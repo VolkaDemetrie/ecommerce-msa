@@ -3,6 +3,7 @@ package com.volka.ecommerce.orderservice.controller;
 import com.volka.ecommerce.orderservice.dto.OrderDto;
 import com.volka.ecommerce.orderservice.dto.RequestOrder;
 import com.volka.ecommerce.orderservice.dto.ResponseOrder;
+import com.volka.ecommerce.orderservice.mq.KafkaProducer;
 import com.volka.ecommerce.orderservice.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 public class OrderController {
     private final Environment env;
     private final OrderService orderService;
+    private final KafkaProducer kafkaProducer;
 
 
     @GetMapping("/health-check")
@@ -44,10 +46,13 @@ public class OrderController {
             @PathVariable("userId") String userId
             ,@RequestBody RequestOrder requestOrder
     ) {
-        OrderDto input = OrderDto.of(requestOrder);
-        input.setUserId(userId);
+        OrderDto orderDto = OrderDto.of(requestOrder);
+        orderDto.setUserId(userId);
 
-        OrderDto createdOrder = orderService.createOrder(input);
+        OrderDto createdOrder = orderService.createOrder(orderDto);
+
+        kafkaProducer.send("example-catalog-topic", orderDto);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseOrder.of(createdOrder));
     }
 

@@ -21,7 +21,7 @@ services:
       - "15672:15672" # admin port
       - "5672:5672" # message port
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.8.0
     container_name: zookeeper
     ports:
       - "2181:2181"
@@ -36,7 +36,7 @@ services:
 #      ZOOKEEPER_SYNC_LIMIT: 2 # 주키퍼 리더와 나머지 서버들의 싱크 타임. 틱타임 * 싱크타임. 멀티 브로커에서 유효한 속성이다.
   kafka-broker:
 #    image: apache/kafka:3.7.2
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.8.0
     container_name: kafka-broker
     ports:
       - "9092:9092" # plain text
@@ -48,8 +48,9 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ADVERTISED_HOST_NAME: localhost # 멀티 브로커 사용 시 루프백 IP 쓰지 말아야함.
 #      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:9092 # 필수. KRaft 모드 시 컨트롤러도 설정
-      KAFKA_LISTENER: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, PLAINTEXT_DOCKER://kafka-broker:19092 # 필수. KRaft 모드 시 컨트롤러도 설정
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_DOCKER:PLAINTEXT
+#      KAFKA_LISTENER: PLAINTEXT://localhost:9092, PLAINTEXT_DOCKER://kafka-broker:19092
       KAFKA_CREATE_TOPICS: "test:1:1" # <topic_name>:<partitions>:<replication_factor>
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # 기본 복제 개수
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # zookeeper 연결 명령어
@@ -81,16 +82,17 @@ services:
 #      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
 
   kafka-connect-jdbc:
-    image: confluentinc/cp-kafka-connect:latest
+    image: confluentinc/cp-kafka-connect:7.8.0
     ports:
       - "8083:8083"
 #    links:
 #      - kafka-broker
 #      - zookeeper
     depends_on:
+      - zookeeper
       - kafka-broker
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: kafka-broker:9092
+      CONNECT_BOOTSTRAP_SERVERS: kafka-broker:19092
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: "test-group"
       CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
@@ -108,8 +110,8 @@ services:
       CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR" # 로그 에러 표시
       CONNECT_PLUGIN_PATH: "/usr/share/java,/etc/kafka-connect/jars"
     volumes:
-      - "$PWD/kafka-connector-plugin/lib:/etc/kafka-connect/jars"
-      - "$PWD/kafka-connector-plugin/jdbc_driver/mysql-connector-j-8.3.0.jar:/usr/share/java/kafka/mysql-connector-j-8.3.0.jar"
+      - "./kafka-connector-plugin/lib:/etc/kafka-connect/jars"
+      - "./kafka-connector-plugin/jdbc_driver/mysql-connector-j-8.3.0.jar:/usr/share/java/kafka/mysql-connector-j-8.3.0.jar"
     networks:
       - msa-network
 #    command:
@@ -124,4 +126,8 @@ networks:
   msa-network:
     name: ecommerce-network
     external: true
-#    driver: bridge
+#    ipam:
+#      driver: bridge
+#      config:
+#        - subnet: 172.0.0.1/16
+        #    driver: bridge
