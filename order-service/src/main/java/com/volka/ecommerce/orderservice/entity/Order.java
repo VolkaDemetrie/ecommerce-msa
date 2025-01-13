@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Entity
@@ -35,7 +36,7 @@ public class Order implements Serializable {
 
     @Column(nullable = false, updatable = false, insertable = false)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     protected Order() {}
 
@@ -47,7 +48,7 @@ public class Order implements Serializable {
         this.totalPrice = totalPrice;
         this.userId = userId;
         this.orderId = orderId;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = new Date();
     }
 
     public static Order create(OrderDto dto) {

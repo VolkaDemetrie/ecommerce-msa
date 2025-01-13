@@ -9,6 +9,9 @@ public class ParseConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.findAndRegisterModules();
+//        return objectMapper;
         return new ObjectMapper();
     }
 }

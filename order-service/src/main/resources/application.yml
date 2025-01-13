@@ -6,11 +6,12 @@ server:
 spring:
   application:
     name: order-service
-#  datasource:
-#    url: jdbc:h2:mem:testdb
-#    driver-class-name: org.h2.Driver
-#    username: sa
-#    password:
+  # TODO : Config 서버로 DB 연동 정보 옮기기. 현재 gradle에 config 클라이언트도 없음
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecommerce
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: user
+    password: test1234
   jpa:
     hibernate:
       ddl-auto: update

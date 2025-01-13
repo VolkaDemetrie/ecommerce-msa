@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @NoArgsConstructor
 @Data
@@ -13,7 +14,7 @@ public class ResponseOrder {
     private Integer qty;
     private Integer unitPrice;
     private Integer totalPrice;
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     private String orderId;
 
