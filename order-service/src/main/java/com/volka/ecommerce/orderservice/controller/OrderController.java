@@ -4,6 +4,7 @@ import com.volka.ecommerce.orderservice.dto.OrderDto;
 import com.volka.ecommerce.orderservice.dto.RequestOrder;
 import com.volka.ecommerce.orderservice.dto.ResponseOrder;
 import com.volka.ecommerce.orderservice.mq.KafkaProducer;
+import com.volka.ecommerce.orderservice.mq.OrderProducer;
 import com.volka.ecommerce.orderservice.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class OrderController {
     private final Environment env;
     private final OrderService orderService;
     private final KafkaProducer kafkaProducer;
-
+    private final OrderProducer orderProducer;
 
     @GetMapping("/health-check")
     public String status(HttpServletRequest request) {
@@ -48,12 +50,19 @@ public class OrderController {
     ) {
         OrderDto orderDto = OrderDto.of(requestOrder);
         orderDto.setUserId(userId);
+        /* JPA */
+//        OrderDto createdOrder = orderService.createOrder(orderDto);
 
-        OrderDto createdOrder = orderService.createOrder(orderDto);
+        /* Kafka */
+        orderDto.setOrderId(UUID.randomUUID().toString());
+        orderDto.setTotalPrice(requestOrder.getQty() * requestOrder.getUnitPrice());
 
-        kafkaProducer.send("example-catalog-topic", orderDto);
+        kafkaProducer.send("example-catalog-topic", orderDto); // 연결 도메인 서비스 싱크
+        orderProducer.send("orders", orderDto); // DB 저장
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseOrder.of(createdOrder));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ResponseOrder.of(orderDto));
     }
 
     @GetMapping("/orders/{orderId}")
