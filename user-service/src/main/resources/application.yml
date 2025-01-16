@@ -18,7 +18,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   h2:
     console:
       enabled: true
@@ -44,7 +44,17 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh,health,beans,busrefresh
+        include: "*"
+  # tracing setup
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      consume: B3
+      produce: B3
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
 
 #token:
 #  expiration-time: 86400000

@@ -2,7 +2,9 @@ version: '3.9'
 
 services:
   db:
+    container_name: db
     image: mysql:8.0.40
+    restart: always
     ports:
       - "3306:3306"
     volumes:
@@ -16,6 +18,7 @@ services:
     networks:
       - msa-network
   rabbitmq:
+    container_name: rabbitmq
     image: rabbitmq:4-management-alpine
     ports:
       - "15672:15672" # admin port
@@ -23,6 +26,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.8.0
     container_name: zookeeper
+    restart: always
     ports:
       - "2181:2181"
     networks:
@@ -38,6 +42,7 @@ services:
 #    image: apache/kafka:3.7.2
     image: confluentinc/cp-kafka:7.8.0
     container_name: kafka-broker
+    restart: always
     ports:
       - "9092:9092" # plain text
       - "9101:9101" # JMX
@@ -83,6 +88,8 @@ services:
 
   kafka-connect-jdbc:
     image: confluentinc/cp-kafka-connect:7.8.0
+    container_name: kafka-connect-jdbc
+    restart: always
     ports:
       - "8083:8083"
 #    links:
@@ -121,6 +128,19 @@ services:
 #        confluent-hub install --no-prompt debezium/debezium-connector-mysql:latest
 #        confluent-hub install --no-prompt confluentinc/kafka-connect-datagen:0.4.0
 #        /etc/confluent/docker/run
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    restart: always
+    environment:
+      - STORAGE_TYPE=mysql
+      - MYSQL_DB=zipkin
+      - MYSQL_USER=zipkin
+      - MYSQL_PASS=zipkin
+      - MYSQL_HOST=db
 
 networks:
   msa-network:
