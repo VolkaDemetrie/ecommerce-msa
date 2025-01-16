@@ -76,10 +76,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new IllegalArgumentException("not found user"));
 //        List<ResponseOrder> orders = orderServiceClient.getOrders(userDto.getUserId());
 
+        log.info("Before call order service");
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker");
         // 폴백 처리로 빈 리스트 반환
-        List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(userId), throwable -> new ArrayList<>());
-
+        List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(userId), throwable -> { log.error(throwable.getMessage()); return new ArrayList<>();});
+        log.info("After call order service");
         userDto.setOrders(orders);
 
         return userDto;

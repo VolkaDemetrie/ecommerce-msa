@@ -38,3 +38,20 @@ logging:
 
 greeting:
   message: "Welcome to the Simple E-commerce"
+
+management:
+  # TODO : include actuator and cloud config.
+#    endpoints:
+#      web:
+#        exposure:
+#          include: "*"
+    # tracing setup
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      consume: B3
+      produce: B3
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans

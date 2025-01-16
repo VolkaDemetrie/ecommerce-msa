@@ -37,6 +37,7 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByUserId(String userId) {
+        log.info("Before retrieve Order data");
         return orderRepository.findAllByUserId(userId);
     }
 

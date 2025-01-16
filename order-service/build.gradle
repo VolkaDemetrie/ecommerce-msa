@@ -39,6 +39,24 @@ dependencies {
 //    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    //Config server 연동
+    implementation 'org.springframework.cloud:spring-cloud-starter-config' // config 서버 사용 시 config 서버로부터 설정 받기 위함
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap' // 최근 스프링 클라우드 설정에서는 bootstrap 정보를 자동으로 읽어오는 부분이 빠져있기 때문에 의존성에 추가해줘야 설정 정보를 인식할 수 있다
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Observability
+    // SpringBoot3 -> deprecated
+//    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+
+    // new Observability. :: SpringBoot3에선 트레이싱 컨텍스트 전파 방식이 Zipkin의 B3 -> W3C로 바뀜
+    implementation 'io.micrometer:micrometer-observation'
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    implementation 'io.zipkin.brave:zipkin-reporter-brave'
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+    implementation 'io.github.openfeign:feign-micrometer' // Spring Cloud OpenFeign의 FeignClient 사용 시 추가
+
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

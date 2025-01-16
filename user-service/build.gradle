@@ -69,8 +69,7 @@ dependencies {
     // new Observability. :: SpringBoot3에선 트레이싱 컨텍스트 전파 방식이 Zipkin의 B3 -> W3C로 바뀜
     implementation 'io.micrometer:micrometer-observation'
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
-    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
-
+    implementation 'io.zipkin.brave:zipkin-reporter-brave'
     implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
     implementation 'io.github.openfeign:feign-micrometer' // Spring Cloud OpenFeign의 FeignClient 사용 시 추가
 
