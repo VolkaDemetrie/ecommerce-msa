@@ -128,6 +128,19 @@ services:
 #        confluent-hub install --no-prompt debezium/debezium-connector-mysql:latest
 #        confluent-hub install --no-prompt confluentinc/kafka-connect-datagen:0.4.0
 #        /etc/confluent/docker/run
+  zipkin-db:
+    image: mysql:8.0.40
+    container_name: zipkin-db
+    restart: always
+    environment:
+      - MYSQL_DATABASE=zipkin
+      - MYSQL_USER=zipkin
+      - MYSQL_PASSWORD=zipkin
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3307:3306"
+    networks:
+      - msa-network
 
   zipkin:
     image: openzipkin/zipkin
@@ -135,12 +148,16 @@ services:
     ports:
       - "9411:9411"
     restart: always
+    depends_on:
+      - zipkin-db
     environment:
       - STORAGE_TYPE=mysql
       - MYSQL_DB=zipkin
       - MYSQL_USER=zipkin
       - MYSQL_PASS=zipkin
-      - MYSQL_HOST=db
+      - MYSQL_HOST=zipkin-db
+    networks:
+      - msa-network
 
 networks:
   msa-network:
