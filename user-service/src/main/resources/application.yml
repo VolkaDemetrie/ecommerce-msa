@@ -32,19 +32,15 @@ spring:
     password: guest
 
 eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true #유레카 서버로부터 인스턴스들의 정보를 주기적으로 가져올 것인지에 대한 설정
-    service-url:
-      defaultZone: http://127.0.0.1:8761/eureka #유레카 서버 url + /eureka 라는 엔드포인트에 현재 서비스 등록
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true #유레카 서버로부터 인스턴스들의 정보를 주기적으로 가져올 것인지에 대한 설정
+#    service-url:
+#      defaultZone: http://127.0.0.1:8761/eureka #유레카 서버 url + /eureka 라는 엔드포인트에 현재 서비스 등록
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance-id:${random.value}}
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
   # tracing setup
   tracing:
     sampling:
@@ -54,7 +50,11 @@ management:
       produce: b3_multi
   zipkin:
     tracing:
-      endpoint: http://localhost:9411/api/v2/spans
+      endpoint: http://127.0.0.1:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, busrefresh, info, metrics, prometheus
 
 #token:
 #  expiration-time: 86400000

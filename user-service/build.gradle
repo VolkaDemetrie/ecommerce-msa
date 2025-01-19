@@ -66,13 +66,16 @@ dependencies {
 //    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
 //    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
 
-    // new Observability. :: SpringBoot3에선 트레이싱 컨텍스트 전파 방식이 Zipkin의 B3 -> W3C로 바뀜
+    // new Observability. :: SpringBoot3에선 트레이싱 컨텍스트 전파 방식이 Zipkin의 B3 -> W3C로 바뀜 :: actuator 필수
     implementation 'io.micrometer:micrometer-observation'
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
     implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
-    implementation 'io.zipkin.brave:zipkin-reporter-brave'
+//    implementation 'io.zipkin.brave:zipkin-reporter-brave'
     implementation 'io.github.openfeign:feign-micrometer' // Spring Cloud OpenFeign의 FeignClient 사용 시 추가
 
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    runtimeOnly 'io.netty:netty-resolver-dns-classes-macos:4.1.111.Final'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

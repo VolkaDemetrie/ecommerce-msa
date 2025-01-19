@@ -1,5 +1,6 @@
 package com.volka.ecommerce.userservice.controller;
 
+import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ public class PingController {
     private final Environment env;
 
     @GetMapping("/health-check")
+    @Timed(value = "users.status", longTask = true)
     public String status(HttpServletRequest request) {
         return String.format(
                 "It's Working in User Service \nport(local.server.port)=%s\nport(server.port)=%s\ntoken secret=%s\ntoken time=%s"
@@ -28,6 +30,7 @@ public class PingController {
     }
 
     @GetMapping("/welcome")
+    @Timed(value = "users.welcome", longTask = true)
     public String welcome() {
         return env.getProperty("greeting.message");
     }
