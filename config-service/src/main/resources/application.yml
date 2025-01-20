@@ -12,11 +12,11 @@ spring:
         native:
           search-locations: file://${user.home}/git/ecommerce-config
         git:
-#          uri: https://github.com/VolkaDemetrie/ecommerce-config.git
+          uri: https://github.com/VolkaDemetrie/ecommerce-config.git
 #          private-key:
-          uri: file://Users/volka/git/ecommerce-config
+#          uri: file://Users/volka/git/ecommerce-config
   rabbitmq:
-    host: 127.0.0.1
+    host: rabbitmq
     port: 5672
     username: guest
     password: guest
@@ -26,5 +26,5 @@ management:
   endpoints:
     web:
       exposure:
-        #        include: refresh, health, beans, httpexchanges, busrefresh, info, metrics, prometheus
-        include: health, busrefresh
+        include: refresh, health, beans, httpexchanges, busrefresh, info, metrics, prometheus
+#        include: health, busrefresh

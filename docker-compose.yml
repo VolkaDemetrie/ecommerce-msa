@@ -171,15 +171,16 @@ services:
     networks:
       - observe-network
 
-
   prometheus:
     image: prom/prometheus:v3.1.0
     container_name: prometheus
     restart: always
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     networks:
-      - observe-network
+      - ecommerce-network
 
   grafana:
     image: grafana/grafana:11.4.0
@@ -188,23 +189,23 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - observe-network
+      - ecommerce-network
 
+  config-service:
+    container_name: config-service
+    build: config-service/Dockerfile
+    ports:
+      - "8888:8888"
+    restart: always
+    networks:
+      - ecommerce-network
 
 networks:
   ecommerce-network:
     name: ecommerce-network
+    attachable: true
     ipam:
       driver: default
       config:
         - gateway: 172.18.0.1
         - subnet: 172.18.0.0/16
-  observe-network:
-    name: observe-network
-    driver: bridge
-    external: true
-      #    ipam:
-#      driver: bridge
-#      config:
-#        - subnet: 172.0.0.1/16
-        #    driver: bridge

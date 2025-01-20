@@ -1,6 +1,8 @@
 encrypt:
 #  key: qwertyuiopasdfghjklzxcvbnm1234567890 # 대칭키 선언
   key-store:
-    location: file://${user.home}/git/ecommerce-msa/keystore/apiEncryptionKey.jks # 키 파일
+#    location: file://${user.home}/git/ecommerce-msa/keystore/apiEncryptionKey.jks # 키 파일
+    # Dockerfile 생성 시 해당 위치에 키 복사
+    location: file:/apiEncryptionKey.jks
     password: 1q2w3e4r # keypass
     alias: apiEncryptionKey
