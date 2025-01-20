@@ -1,7 +1,7 @@
 server:
   port: 0
-  servlet:
-    context-path: /${spring.application.name}
+#  servlet:
+#    context-path: /${spring.application.name}
 
 spring:
   application:

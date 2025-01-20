@@ -16,14 +16,22 @@ services:
       MYSQL_ROOT_PASSWORD: 'rootpass'
       TZ: Asia/Seoul
     networks:
-      - msa-network
+      - ecommerce-network
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:4-management-alpine
     restart: always
     ports:
+      - "15671:15671"
       - "15672:15672" # admin port
+      - "4369:4369"
+      - "5671:5671"
       - "5672:5672" # message port
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - ecommerce-network
   zookeeper:
     image: confluentinc/cp-zookeeper:7.8.0
     container_name: zookeeper
@@ -31,8 +39,8 @@ services:
     ports:
       - "2181:2181"
     networks:
-      - msa-network
-#      msa-network:
+      - ecommerce-network
+#      ecommerce-network:
 #        ipv4_address: 172.18.0.100
     environment:
 #      ZOOKEEPER_SERVER_ID: 1 # 주키퍼 클러스터에서 유일하게 주키퍼를 식별할 아이디
@@ -68,8 +76,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - msa-network
-#      msa-network:
+      - ecommerce-network
+#      ecommerce-network:
 #        ipv4_address: 172.18.0.10
 
 ########## KRaft 모드 시 필요 옵션 ##########
@@ -121,7 +129,7 @@ services:
       - "./kafka-connector-plugin/lib:/etc/kafka-connect/jars"
       - "./kafka-connector-plugin/jdbc_driver/mysql-connector-j-8.3.0.jar:/usr/share/java/kafka/mysql-connector-j-8.3.0.jar"
     networks:
-      - msa-network
+      - ecommerce-network
 #    command:
 #      - bash
 #      - -c
@@ -163,15 +171,39 @@ services:
     networks:
       - observe-network
 
+
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    networks:
+      - observe-network
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - observe-network
+
+
 networks:
-  msa-network:
+  ecommerce-network:
     name: ecommerce-network
-    driver: bridge
-#    external: true
+    ipam:
+      driver: default
+      config:
+        - gateway: 172.18.0.1
+        - subnet: 172.18.0.0/16
   observe-network:
     name: observe-network
     driver: bridge
-#    ipam:
+    external: true
+      #    ipam:
 #      driver: bridge
 #      config:
 #        - subnet: 172.0.0.1/16
