@@ -16,7 +16,7 @@ spring:
       ddl-auto: update
     show-sql: true
     generate-ddl: true
-    database: h2
+    database: mysql
     defer-datasource-initialization: true
   h2:
     console:
@@ -36,7 +36,7 @@ eureka:
 
 logging:
   level:
-    com.volka.ecommerce.orderservice: DEBUG
+    com.volka.ecommerce.catalogservice: DEBUG
 
 greeting:
   message: "Welcome to the Simple E-commerce"
