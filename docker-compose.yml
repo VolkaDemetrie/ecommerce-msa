@@ -32,21 +32,23 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
     networks:
       - ecommerce-network
+
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.8.0
     container_name: zookeeper
     restart: always
     ports:
       - "2181:2181"
-    networks:
-      - ecommerce-network
-#      ecommerce-network:
-#        ipv4_address: 172.18.0.100
     environment:
 #      ZOOKEEPER_SERVER_ID: 1 # 주키퍼 클러스터에서 유일하게 주키퍼를 식별할 아이디
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000 # 주키퍼 클러스터 구성 시 동기화를 위한 기본 틱 타임 지정 (ms 단위)
 #      ZOOKEEPER_SYNC_LIMIT: 2 # 주키퍼 리더와 나머지 서버들의 싱크 타임. 틱타임 * 싱크타임. 멀티 브로커에서 유효한 속성이다.
+    networks:
+      ecommerce-network:
+        ipv4_address: 172.18.0.100
+
   kafka-broker:
 #    image: apache/kafka:3.7.2
     image: confluentinc/cp-kafka:7.8.0
@@ -60,7 +62,7 @@ services:
       - zookeeper # zookeeper 모드 사용 시 주키퍼 이후에 런 돼야한다.
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ADVERTISED_HOST_NAME: localhost # 멀티 브로커 사용 시 루프백 IP 쓰지 말아야함.
+      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101 # 멀티 브로커 사용 시 루프백 IP 쓰지 말아야함.
 #      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, PLAINTEXT_DOCKER://kafka-broker:19092 # 필수. KRaft 모드 시 컨트롤러도 설정
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_DOCKER:PLAINTEXT
@@ -72,13 +74,12 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_JMX_PORT: 9101
-      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_JMX_HOSTNAME: 172.18.0.101
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - ecommerce-network
-#      ecommerce-network:
-#        ipv4_address: 172.18.0.10
+      ecommerce-network:
+        ipv4_address: 172.18.0.101
 
 ########## KRaft 모드 시 필요 옵션 ##########
 #      KAFKA_NODE_ID: 1 # KRaft 모드 사용 시 노드 아이디
@@ -101,9 +102,6 @@ services:
     restart: always
     ports:
       - "8083:8083"
-#    links:
-#      - kafka-broker
-#      - zookeeper
     depends_on:
       - zookeeper
       - kafka-broker
@@ -191,6 +189,10 @@ services:
     networks:
       - ecommerce-network
 
+
+
+
+
   config-service:
     container_name: config-service
     build: config-service
@@ -201,6 +203,87 @@ services:
       - rabbitmq
     environment:
       - spring.rabbitmq.host=rabbitmq
+    networks:
+      - ecommerce-network
+
+  discovery-service:
+    container_name: discovery-service
+    build: discovery-service
+    restart: always
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-service
+    environment:
+      - spring.cloud.config.uri=http://config-service:8888
+    networks:
+      - ecommerce-network
+
+  api-gateway-service:
+    container_name: api-gateway-service
+    build: api-gateway-service
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - discovery-service
+    environment:
+      - spring.cloud.config.uri=http://config-service:8888
+      - spring.rabbitmq.host=rabbitmq
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    networks:
+      ecommerce-network:
+        ipv4_address: 172.18.0.5
+
+
+  user-service:
+    container_name: user-service
+    build: user-service
+    restart: always
+    depends_on:
+      - api-gateway-service
+      - db
+    environment:
+      - spring.cloud.config.uri=http://config-service:8888
+      - spring.rabbitmq.host=rabbitmq
+      - spring.datasource.url=jdbc:mysql://db:3306/ecommerce
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - management.zipkin.tracing.endpoint=http://zipkin:9411/api/v2/spans
+      - logging.file=/api-logs/users-ws.log
+    networks:
+      - ecommerce-network
+
+  order-service:
+    container_name: order-service
+    build: order-service
+    restart: always
+    depends_on:
+      - api-gateway-service
+      - db
+    environment:
+      - spring.cloud.config.uri=http://config-service:8888
+      - spring.rabbitmq.host=rabbitmq
+      - spring.datasource.url=jdbc:mysql://db:3306/ecommerce
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - management.zipkin.tracing.endpoint=http://zipkin:9411/api/v2/spans
+      - logging.file=/api-logs/users-ws.log
+    networks:
+      - ecommerce-network
+
+  catalog-service:
+    container_name: catalog-service
+    build: catalog-service
+    restart: always
+    depends_on:
+      - api-gateway-service
+      - db
+    environment:
+      - spring.cloud.config.uri=http://config-service:8888
+      - spring.rabbitmq.host=rabbitmq
+      - spring.datasource.url=jdbc:mysql://db:3306/ecommerce
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - management.zipkin.tracing.endpoint=http://zipkin:9411/api/v2/spans
+      - logging.file=/api-logs/users-ws.log
     networks:
       - ecommerce-network
 
