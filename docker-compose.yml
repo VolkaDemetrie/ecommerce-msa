@@ -225,6 +225,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - config-service
       - discovery-service
     environment:
       - spring.cloud.config.uri=http://config-service:8888
@@ -240,6 +241,7 @@ services:
     build: user-service
     restart: always
     depends_on:
+      - config-service
       - api-gateway-service
       - db
     environment:
@@ -257,6 +259,7 @@ services:
     build: order-service
     restart: always
     depends_on:
+      - config-service
       - api-gateway-service
       - db
     environment:
@@ -265,7 +268,7 @@ services:
       - spring.datasource.url=jdbc:mysql://db:3306/ecommerce
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
       - management.zipkin.tracing.endpoint=http://zipkin:9411/api/v2/spans
-      - logging.file=/api-logs/users-ws.log
+      - logging.file=/api-logs/orders-ws.log
     networks:
       - ecommerce-network
 
@@ -274,6 +277,7 @@ services:
     build: catalog-service
     restart: always
     depends_on:
+      - config-service
       - api-gateway-service
       - db
     environment:
@@ -282,7 +286,7 @@ services:
       - spring.datasource.url=jdbc:mysql://db:3306/ecommerce
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
       - management.zipkin.tracing.endpoint=http://zipkin:9411/api/v2/spans
-      - logging.file=/api-logs/users-ws.log
+      - logging.file=/api-logs/catalogs-ws.log
     networks:
       - ecommerce-network
 

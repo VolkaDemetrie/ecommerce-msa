@@ -3,5 +3,6 @@ spring:
     config:
       uri: http://localhost:8888
       name: catalog-service
+      fail-fast: true
 #  profiles:
 #    active: dev

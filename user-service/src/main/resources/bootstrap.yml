@@ -3,5 +3,6 @@ spring:
     config:
       uri: http://127.0.0.1:8888
       name: user-service # config git repo에 yml 파일명
+      fail-fast: true
 #  profiles:
 #    active: dev
