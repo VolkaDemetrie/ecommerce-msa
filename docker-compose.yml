@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+########### infrastructure ########################################################
   db:
     container_name: db
     image: mysql:8.0.40
@@ -190,9 +191,7 @@ services:
       - ecommerce-network
 
 
-
-
-
+########### service ########################################################
   config-service:
     container_name: config-service
     build: config-service
@@ -233,7 +232,7 @@ services:
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
     networks:
       ecommerce-network:
-        ipv4_address: 172.18.0.5
+        ipv4_address: 172.18.0.200
 
 
   user-service:
