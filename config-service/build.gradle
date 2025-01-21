@@ -21,9 +21,6 @@ ext {
     set('springCloudVersion', "2023.0.3")
 }
 
-group = 'com.volka.ecommerce'
-version = '1.0-SNAPSHOT'
-
 repositories {
     mavenCentral()
 }

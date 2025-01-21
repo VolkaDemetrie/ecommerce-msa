@@ -169,7 +169,7 @@ services:
 #      - MYSQL_PASS=zipkin
 #      - MYSQL_HOST=zipkin-db
     networks:
-      - observe-network
+      - ecommerce-network
 
   prometheus:
     image: prom/prometheus:v3.1.0
@@ -193,17 +193,23 @@ services:
 
   config-service:
     container_name: config-service
-    build: config-service/Dockerfile
+    build: config-service
     ports:
       - "8888:8888"
     restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      - spring.rabbitmq.host=rabbitmq
     networks:
       - ecommerce-network
 
 networks:
   ecommerce-network:
+    driver: bridge
     name: ecommerce-network
-    attachable: true
+    external: true
+    #    attachable: true
     ipam:
       driver: default
       config:
