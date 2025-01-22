@@ -5,12 +5,13 @@ import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name = "catalog")
+@Table(name = "catalogs")
 public class Catalog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +27,8 @@ public class Catalog {
     private Integer unitPrice;
 
     @Column(nullable = false, updatable = false, insertable = false)
-    @ColumnDefault(value = "CURRENT_TIMESTAMP")
+//    @ColumnDefault(value = "CURRENT_TIMESTAMP")
+    @CreatedDate
     private LocalDateTime createdAt;
 
     protected Catalog() {}

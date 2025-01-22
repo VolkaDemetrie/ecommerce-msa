@@ -65,7 +65,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101 # 멀티 브로커 사용 시 루프백 IP 쓰지 말아야함.
 #      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, PLAINTEXT_DOCKER://kafka-broker:19092 # 필수. KRaft 모드 시 컨트롤러도 설정
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://172.18.0.101:9092, PLAINTEXT_DOCKER://kafka-broker:19092 # 필수. KRaft 모드 시 컨트롤러도 설정
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_DOCKER:PLAINTEXT
 #      KAFKA_LISTENER: PLAINTEXT://localhost:9092, PLAINTEXT_DOCKER://kafka-broker:19092
       KAFKA_CREATE_TOPICS: "test:1:1" # <topic_name>:<partitions>:<replication_factor>
@@ -170,6 +170,8 @@ services:
     networks:
       - ecommerce-network
 
+
+  ######## Monitoring ################
   prometheus:
     image: prom/prometheus:v3.1.0
     container_name: prometheus
