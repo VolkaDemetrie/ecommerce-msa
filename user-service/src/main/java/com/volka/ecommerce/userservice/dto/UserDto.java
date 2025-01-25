@@ -42,9 +42,9 @@ public class UserDto {
     }
 
     private UserDto(RequestUser requestUser) {
-        this.email = requestUser.getEmail();
-        this.name = requestUser.getName();
-        this.pwd = requestUser.getPwd();
+        this.email = requestUser.email();
+        this.name = requestUser.name();
+        this.pwd = requestUser.pwd();
     }
 
     public static UserDto of(User user) {

@@ -19,6 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -38,28 +40,33 @@ import java.util.Base64;
 @Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private UserService userService;
-    private Environment environment;
-    private ObjectMapper objectMapper;
+    private final UserService userService;
+    private final Environment environment;
+    private final ObjectMapper objectMapper;
+    private final Validator validator;
 //    private SecretKey secretKey;
 
 //    private static final String algorithm = "HmacSHA256";
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService, Environment environment) throws NoSuchAlgorithmException {
+    public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService, Environment environment, Validator validator) throws NoSuchAlgorithmException {
         super(authenticationManager);
         this.userService = userService;
         this.environment = environment;
         this.objectMapper = new ObjectMapper();
 //        secretKey = SecretKeyFactory.getInstance(algorithm).generateSecret(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), algorithm));
+        this.validator = validator;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            RequestLogin creds = objectMapper.readValue(request.getInputStream(), RequestLogin.class);
+            RequestLogin creds = objectMapper.reader().readValue(request.getInputStream(), RequestLogin.class);
+
+            Errors errors = validator.validateObject(creds);
+            if (errors.hasErrors()) throw new RuntimeException(errors.getAllErrors().toString());
 
             return getAuthenticationManager().authenticate(
-                    new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(), new ArrayList<>()) // 배열은 권한
+                    new UsernamePasswordAuthenticationToken(creds.email(), creds.password(), new ArrayList<>()) // 배열은 권한
             );
 
         } catch (IOException e) {

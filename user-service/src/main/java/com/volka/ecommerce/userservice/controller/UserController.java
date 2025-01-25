@@ -1,20 +1,21 @@
 package com.volka.ecommerce.userservice.controller;
 
-import com.volka.ecommerce.userservice.dto.RequestLogin;
 import com.volka.ecommerce.userservice.dto.RequestUser;
 import com.volka.ecommerce.userservice.dto.ResponseUser;
 import com.volka.ecommerce.userservice.dto.UserDto;
 import com.volka.ecommerce.userservice.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 @Slf4j
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @RestController
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
+    public ResponseEntity<ResponseUser> createUser(@Valid @RequestBody RequestUser user) {
         UserDto dto = userService.createUser(UserDto.of(user));
 
         return new ResponseEntity<>(ResponseUser.of(dto), HttpStatus.CREATED);

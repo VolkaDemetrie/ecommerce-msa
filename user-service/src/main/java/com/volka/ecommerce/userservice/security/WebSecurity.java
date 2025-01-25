@@ -19,6 +19,7 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
+import org.springframework.validation.Validator;
 
 import java.util.function.Supplier;
 
@@ -29,6 +30,7 @@ public class WebSecurity {
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Environment env;
+    private final Validator validator;
 
     public static final String ALLOWED_IP_ADDRESS = "127.0.0.1";
     public static final String SUBNET = "/32";
@@ -74,6 +76,6 @@ public class WebSecurity {
     }
 
     private AuthenticationFilter getAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
-        return new AuthenticationFilter(authenticationManager, userService, env);
+        return new AuthenticationFilter(authenticationManager, userService, env, validator);
     }
 }

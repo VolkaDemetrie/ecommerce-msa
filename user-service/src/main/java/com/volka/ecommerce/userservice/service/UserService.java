@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,10 +63,16 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserDto> getAll() {
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("getAll");
+
         return userRepository.findAll().stream()
                 .map(UserDto::of)
                 .peek(userDto -> {
-                    List<ResponseOrder> orders = orderServiceClient.getOrders(userDto.getUserId());
+                    List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(userDto.getUserId()), throwable -> {
+                        log.error("ERROR :: {} : {}", throwable.getMessage(), throwable);
+                        return Collections.emptyList();
+                    });
                     userDto.setOrders(orders);
                 }).toList();
     }
