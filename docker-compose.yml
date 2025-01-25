@@ -35,21 +35,22 @@ services:
       - ecommerce-network
 
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.8.0
-    container_name: zookeeper
-    restart: always
-    ports:
-      - "2181:2181"
-    environment:
-#      ZOOKEEPER_SERVER_ID: 1 # 주키퍼 클러스터에서 유일하게 주키퍼를 식별할 아이디
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000 # 주키퍼 클러스터 구성 시 동기화를 위한 기본 틱 타임 지정 (ms 단위)
-#      ZOOKEEPER_SYNC_LIMIT: 2 # 주키퍼 리더와 나머지 서버들의 싱크 타임. 틱타임 * 싱크타임. 멀티 브로커에서 유효한 속성이다.
-    networks:
-      ecommerce-network:
-        ipv4_address: 172.18.0.100
+#  zookeeper:
+#    image: confluentinc/cp-zookeeper:7.8.0
+#    container_name: zookeeper
+#    restart: always
+#    ports:
+#      - "2181:2181"
+#    environment:
+##      ZOOKEEPER_SERVER_ID: 1 # 주키퍼 클러스터에서 유일하게 주키퍼를 식별할 아이디
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#      ZOOKEEPER_TICK_TIME: 2000 # 주키퍼 클러스터 구성 시 동기화를 위한 기본 틱 타임 지정 (ms 단위)
+##      ZOOKEEPER_SYNC_LIMIT: 2 # 주키퍼 리더와 나머지 서버들의 싱크 타임. 틱타임 * 싱크타임. 멀티 브로커에서 유효한 속성이다.
+#    networks:
+#      ecommerce-network:
+#        ipv4_address: 172.18.0.100
 
+### TODO :: 나중엔 k8s로 전환하여 구축 시에 쿠버네티스 클러스터 안에 같이 묶이는 것이 아닌 여러 클러스터가 Kafka를 쓰게 할 것이므로 같은 docker compose 내에서 묶이면 안된다. 따라서 HOST 관련해서 외부 노출시켜줄 진입점이 필요함. 나중에 설정
   kafka-broker:
 #    image: apache/kafka:3.7.2
     image: confluentinc/cp-kafka:7.8.0
@@ -59,23 +60,63 @@ services:
       - "9092:9092" # plain text
       - "9101:9101" # JMX
 #      - "9093:9093" # controller broker
-    depends_on:
-      - zookeeper # zookeeper 모드 사용 시 주키퍼 이후에 런 돼야한다.
+######## Zookeeper 연동 #################################################
+#    depends_on:
+#      - zookeeper # zookeeper 모드 사용 시 주키퍼 이후에 런 돼야한다.
+#    environment:
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101 # 멀티 브로커 사용 시 루프백 IP 쓰지 말아야함.
+##      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://172.18.0.101:9092, PLAINTEXT_DOCKER://kafka-broker:19092 # 필수. KRaft 모드 시 컨트롤러도 설정
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_DOCKER:PLAINTEXT
+##      KAFKA_LISTENER: PLAINTEXT://localhost:9092, PLAINTEXT_DOCKER://kafka-broker:19092
+#      KAFKA_CREATE_TOPICS: "test:1:1" # <topic_name>:<partitions>:<replication_factor>
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # 기본 복제 개수
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # zookeeper 연결 명령어
+#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+#      KAFKA_JMX_PORT: 9101
+#      KAFKA_JMX_HOSTNAME: 172.18.0.101
+
+####### KRaft mode ########################################################
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101 # 멀티 브로커 사용 시 루프백 IP 쓰지 말아야함.
-#      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://172.18.0.101:9092, PLAINTEXT_DOCKER://kafka-broker:19092 # 필수. KRaft 모드 시 컨트롤러도 설정
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_DOCKER:PLAINTEXT
-#      KAFKA_LISTENER: PLAINTEXT://localhost:9092, PLAINTEXT_DOCKER://kafka-broker:19092
-      KAFKA_CREATE_TOPICS: "test:1:1" # <topic_name>:<partitions>:<replication_factor>
+      #      KAFKA_BROKER_ID: 1
+      KAFKA_NODE_ID: 1 # KRaft 모드 사용 시 노드 아이디
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_DOCKER:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://172.18.0.101:9092, PLAINTEXT_DOCKER://kafka-broker:19092' # 필수. KRaft 모드 시 컨트롤러도 설정
+      KAFKA_PROCESS_ROLES: 'broker,controller' # KRaft 모드 시 역할 지정
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka-broker:29093'
+      KAFKA_LISTENERS: 'CONTROLLER://:29093,PLAINTEXT://:9092,PLAINTEXT_DOCKER://:19092' #KRaft mode. compose안에 한번에 묶이기 때문에 DOCKER 사용
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # 기본 복제 개수
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # zookeeper 연결 명령어
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+#      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
       KAFKA_JMX_PORT: 9101
       KAFKA_JMX_HOSTNAME: 172.18.0.101
+
+####### other docker network ###########################################
+#      KAFKA_NODE_ID: 1
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+#      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT_HOST://192.168.65.3:9092,PLAINTEXT://broker:19092'
+#      KAFKA_PROCESS_ROLES: 'broker,controller'
+#      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:29093'
+#      KAFKA_LISTENERS: 'CONTROLLER://:29093,PLAINTEXT_HOST://:9092,PLAINTEXT://:19092'
+#      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+#      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+#      CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+
+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -104,7 +145,7 @@ services:
     ports:
       - "8083:8083"
     depends_on:
-      - zookeeper
+#      - zookeeper # KRaft mode로 전환
       - kafka-broker
     environment:
       CONNECT_BOOTSTRAP_SERVERS: kafka-broker:19092

@@ -10,6 +10,7 @@ public record RequestLogin (
         @Size(min = 2)
         @Email
         String email,
+
         @NotNull
         @Size(min = 8)
         String password
