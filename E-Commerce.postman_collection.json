@@ -1,0 +1,704 @@
+{
+	"info": {
+		"_postman_id": "b9cd79e7-cb28-4f49-9506-1af45cd5db12",
+		"name": "E-Commerce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29084219"
+	},
+	"item": [
+		{
+			"name": "USER-SERVICE",
+			"item": [
+				{
+					"name": "헬스체크",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmNDE3NDM1YS03ZjU2LTQyZjQtOGJlNi02YjgxZjJjM2Q5NzQiLCJleHAiOjE3MzQ2OTkxNzQsImlhdCI6MTczNDYxMjc3N",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user-service}}/health-check",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "계정추가",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"asdf7@asdf.com\",\n    \"name\": \"name!!\",\n    \"pwd\": \"pwd1234567890\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{user-service}}/users",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "계정 전체 조회",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjNTc2Njg1Mi0zMGQyLTQ2NTUtODg1Ny0yMDc2MGI1MDFjMDkiLCJleHAiOjE3Mzc4MjAxOTIsImlhdCI6MTczNzczMzc5Mn0.Felae64pTwmQkudYTZzJrzjKkzFdrp8pcvLnhTLsuPInOWOmhwdTd9wPZ52LyuRZkyY345aVJLbbndszFDaoNg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user-service}}/users",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "로그인",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"asdf7@asdf.com\",\n    \"password\":\"pwd1234567890\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{user-service}}/login",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "welcome",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user-service}}/welcome",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"welcome"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "사용자 단건 조회",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxZTgyYWM5Ni00YTU1LTQ3ZWEtYTY5MC1lMzYyYzA2YjE5ODQiLCJleHAiOjE3MzYwNTk3OTMsImlhdCI6MTczNTk3MzM5M30.WbOctQ8jMW6wO0jHS5o_7jtmGbysVqTthRWwPBMEXa8q92Qlq9ER2dffFtD6Jjxl7BmkPSQtuse8Hzse_Go4Hw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user-service}}/users/1e82ac96-4a55-47ea-a690-e362c06b1984",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"users",
+								"1e82ac96-4a55-47ea-a690-e362c06b1984"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "액츄에이터",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmNDE3NDM1YS03ZjU2LTQyZjQtOGJlNi02YjgxZjJjM2Q5NzQiLCJleHAiOjE3MzQ2OTkxNzQsImlhdCI6MTczNDYxMjc3N",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{user-service}}/actuator/busrefresh",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"actuator",
+								"busrefresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "액츄에이터 Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmNDE3NDM1YS03ZjU2LTQyZjQtOGJlNi02YjgxZjJjM2Q5NzQiLCJleHAiOjE3MzQ2OTkxNzQsImlhdCI6MTczNDYxMjc3N",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{user-service}}/actuator/busrefresh",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"actuator",
+								"busrefresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CATALOG-SERVICE",
+			"item": [
+				{
+					"name": "카탈로그 전체 조회",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{catalog-service}}/catalogs",
+							"host": [
+								"{{catalog-service}}"
+							],
+							"path": [
+								"catalogs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "헬스체크",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{catalog-service}}/health-check",
+							"host": [
+								"{{catalog-service}}"
+							],
+							"path": [
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ORDER-SERVICE",
+			"item": [
+				{
+					"name": "주문",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"CATALOG-0001\",\n    \"qty\": 1,\n    \"unitPrice\": \"1000\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{order-service}}/cb4eef8a-b5f0-47b5-9905-fa92cafeccbb/orders",
+							"host": [
+								"{{order-service}}"
+							],
+							"path": [
+								"cb4eef8a-b5f0-47b5-9905-fa92cafeccbb",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "주문 조회",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{order-service}}/orders/b70ba56a-b848-4a46-b0b9-e2381fc1fabd",
+							"host": [
+								"{{order-service}}"
+							],
+							"path": [
+								"orders",
+								"b70ba56a-b848-4a46-b0b9-e2381fc1fabd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "사용자 주문 내역 조회",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{order-service}}/92013b4a-5821-45e9-8de0-88fc0a08e737/orders",
+							"host": [
+								"{{order-service}}"
+							],
+							"path": [
+								"92013b4a-5821-45e9-8de0-88fc0a08e737",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API-GATEWAY",
+			"item": [
+				{
+					"name": "액츄에이터",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmNDE3NDM1YS03ZjU2LTQyZjQtOGJlNi02YjgxZjJjM2Q5NzQiLCJleHAiOjE3MzQ2OTkxNzQsImlhdCI6MTczNDYxMjc3N",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{gateway}}/actuator/busrefresh",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"actuator",
+								"busrefresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CONFIG-SERVICE",
+			"item": [
+				{
+					"name": "encrypt",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmNDE3NDM1YS03ZjU2LTQyZjQtOGJlNi02YjgxZjJjM2Q5NzQiLCJleHAiOjE3MzQ2OTkxNzQsImlhdCI6MTczNDYxMjc3N",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "sad",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/encrypt",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"encrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "decrypt",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmNDE3NDM1YS03ZjU2LTQyZjQtOGJlNi02YjgxZjJjM2Q5NzQiLCJleHAiOjE3MzQ2OTkxNzQsImlhdCI6MTczNDYxMjc3N",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "AYBtuUaW4USsj4+KvybiNSuqBrXI5PkAPSo/YA/fPQc6k99JMRKsEppx+YS7wkY8fn809eAcYv+QnYG/LpqD15AWtKHk775xGziF7k5seJ2d8CwMWujYyajU4PWKm5gYMlCUCxZdc6wwqjVvSBABsK5MqDgc3NsVQ4Yzom+ovlisPrNTJj76JuG4S7kwpVOOMn2oX4guuCpKtbqT7Uci5+kN9bgrg4Fw8dgpge2Dpq+nVuF41S555PXTPBrzscIz9o7cEp8ZeCXDfkLtCSFoM40mCY+wX2yLkcY/G2V6HzAhRhKOvW6OXMkKoFivDsF7N+6N3rlzAyz+vRITBlks7Eg5WAW61TcT2TpUcvDyS/sYT6papl+1RXIOJ8kwDuX72AfMvf7WusNVXWS+zpetXD4z0/m51hPb7FsZv31Fq/b9IOxUXr0GFg541tgop63MYHbMaquYzm12l7GOxjML5zDEzCEu493/nUzAZ/Fph7vbuW1bpb/zIRaV46fUimj6S6qAt6CaNRPS9NgS0iKqIggA7wgpv05bt9xrNQhrEIFMjw==",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8888/decrypt",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"decrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cloud bus refresh",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmNDE3NDM1YS03ZjU2LTQyZjQtOGJlNi02YjgxZjJjM2Q5NzQiLCJleHAiOjE3MzQ2OTkxNzQsImlhdCI6MTczNDYxMjc3N",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/actuator/busrefresh",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"actuator",
+								"busrefresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "설정 정보",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmNDE3NDM1YS03ZjU2LTQyZjQtOGJlNi02YjgxZjJjM2Q5NzQiLCJleHAiOjE3MzQ2OTkxNzQsImlhdCI6MTczNDYxMjc3N",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8888/user-service/default",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user-service",
+								"default"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Kafka Connect",
+			"item": [
+				{
+					"name": "Source 커넥터 등록",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"my-source-connect\",\n    \"config\": {\n        \"connector.class\": \"io.confluent.connect.jdbc.JdbcSourceConnector\",\n        \"connection.url\": \"jdbc:mysql://db:3306/ecommerce\",\n        \"connection.user\": \"user\",\n        \"connection.password\": \"test1234\",\n        \"mode\": \"incrementing\",\n        \"incrementing.column.name\": \"id\",\n        \"table.whitelist\": \"users\",\n        \"topic.prefix\": \"my_topic_\",\n        \"tasks.max\": \"1\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8083/connectors",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "커넥트 목록 확인",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8083/connectors",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "커넥트 상태 확인",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8083/connectors/my-order-sink-connect/status",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"my-order-sink-connect",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sink 커넥터 등록",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"my-sink-connect\",\n    \"config\": {\n        \"connector.class\": \"io.confluent.connect.jdbc.JdbcSinkConnector\",\n        \"connection.url\": \"jdbc:mysql://db:3306/mydb\",\n        \"connection.user\": \"user\",\n        \"connection.password\": \"test1234\",\n        \"auto.create\": \"true\",\n        \"auto.evolve\": \"true\",\n        \"delete.enabled\": \"false\",\n        \"tasks.max\": \"1\",\n        \"topics\": \"my_topic_users\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8083/connectors",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "커넥터 플러그인 확인",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8083/connector-plugins",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connector-plugins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Orders Sink 커넥터 등록",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"my-order-sink-connect\",\n    \"config\": {\n        \"connector.class\": \"io.confluent.connect.jdbc.JdbcSinkConnector\",\n        \"connection.url\": \"jdbc:mysql://db:3306/ecommerce\",\n        \"connection.user\": \"user\",\n        \"connection.password\": \"test1234\",\n        \"auto.create\": \"true\",\n        \"auto.evolve\": \"true\",\n        \"delete.enabled\": \"false\",\n        \"tasks.max\": \"1\",\n        \"topics\": \"orders\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8083/connectors",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "커넥터 제거",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8083/connectors/my-order-sink-connect",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"my-order-sink-connect"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "gateway",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "user-service",
+			"value": "{{gateway}}/user-service",
+			"type": "string"
+		},
+		{
+			"key": "catalog-service",
+			"value": "{{gateway}}/catalog-service",
+			"type": "string"
+		},
+		{
+			"key": "order-service",
+			"value": "{{gateway}}/order-service",
+			"type": "string"
+		}
+	]
+}
